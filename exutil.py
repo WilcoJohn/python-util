@@ -75,7 +75,7 @@ def filter_files(path_list:  str | list[str] = r"./",
     elif isinstance(path_list,(list, tuple)):                            # filter iteratible list for relevant patter
         for item in path_list:
              if (fnmatch(item, pattern) == matchPattern):          # if str matches pattern then append
-                    results.append(full_path)
+                    results.append(item)
                  
     else:
         raise TypeError(f"Unrecognised data type for path_list feed var: {type(path_list)}, expected str or tuple of strings.");
