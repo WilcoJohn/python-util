@@ -317,7 +317,7 @@ def search_excl_val(sheet : Worksheet,
                         similar_target_hits['Value'].append(cell_iii.value);
                         similar_target_hits['Coordinate'].append(cell_iii.coordinate);
         if equal_targets['Value'] and not return_all_vals:
-            return equal_targets;     
+            return equal_targets, None;     
         elif return_all_vals:
             return {'Coordinate' : equal_targets['Coordinate'] + similar_target_hits['Coordinate'], 
                    'Value' : equal_targets['Value'] + similar_target_hits['Value']};
@@ -347,7 +347,7 @@ def get_excl_sheet_vals(sheet : Worksheet,
             row_start, col_start = start_Cord;
     else:
         raise TypeError(f"Expected type 'tuple[int, int]' or 'str' for 'start_Cord' - recieved '{start_Cord}' : {type(start_Cord)}");
-
+            
     # Test data type for end values, ensure the data type is either str or tuple[in,int]
     if isinstance(end_Cord, str):
         row_end, col_end = exc_coord_to_rc(end_Cord);
@@ -370,9 +370,10 @@ def get_excl_sheet_vals(sheet : Worksheet,
     
     values_extracted = [];
     
-    for r_i in range(row_start, row_end):
+    
+    for r_i in range(row_start, row_end+1):
         values_extracted.append(array([sheet.cell(row=r_i, column = c_ii).value for c_ii in range(col_start, col_end+1)]));
-
+    
     if (row_start == row_end) or (col_start == col_end):
         return array(values_extracted).ravel()
     return array(values_extracted);       
