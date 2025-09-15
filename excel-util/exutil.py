@@ -38,7 +38,7 @@ def exc_coord_to_rc(cell_Coord : str) -> (int, int):
     col = column_index_from_string(col_letter);              # get column value
     return row, col;
 
-def filter_files(path_list:  str | list[str] = r"./", 
+def filter_files(path_list:  str | list[str] = ".\\", 
                 pattern: str = "*", 
                 matchPattern: bool = True) -> list[str]:  
     """
@@ -211,7 +211,7 @@ def search_excl_val(sheet : Worksheet,
 
     import numbers
     import datetime
-    from numpy import round
+    from numpy import round, str_
     
     # Error handling: check if sheet is of correct data-type
     if not isinstance(sheet, Worksheet):   
@@ -223,10 +223,10 @@ def search_excl_val(sheet : Worksheet,
         raise TypeError(f"Search targets not same data type : {search_targets}")
     
     similar_target_hits = {'Coordinate' : [], 'Value' : [] };
-    equal_targets = {'Coordinate' : [], 'Value' : [] };
+    equal_targets = {'Coordinate' : [], 'Value' : []};
     
     # Case 1: str val
-    if search_type is str:
+    if (search_type is str) or (search_type is str_):
         for search_val_i in search_targets:
             for row_ii in sheet.iter_rows(values_only=False):
                 for cell_iii in row_ii:
@@ -237,10 +237,11 @@ def search_excl_val(sheet : Worksheet,
                             return cell_iii.coordinate, cell_iii.value;
                         equal_targets['Coordinate'].append(cell_iii.coordinate);
                         equal_targets['Value'].append(cell_iii.value);
+                        
                     try:
                         if is_similar(search_val_i, str(cell_iii.value), threshold=threshold):
                             similar_target_hits['Coordinate'].append(cell_iii.coordinate);
-                            similar_target_hits['Value'].append(cell_iii.value);
+                            similar_target_hits['Value'].append(cell_iii.value); 
                     except SyntaxError:
                         continue;    
         if return_all_vals:
@@ -304,7 +305,7 @@ def search_excl_val(sheet : Worksheet,
                 
     elif (search_type is datetime.time):
         for search_val_i in search_targets:
-            for row_ii in sheet.iter_rows(values_only=False):
+            for row_ii in sheet.iter_rows(values_only=True):
                 for cell_iii in row_ii:
                     if not isinstance(cell_iii.value, datetime.time):
                         continue;
@@ -343,8 +344,8 @@ def get_excl_sheet_vals(sheet : Worksheet,
     if isinstance(start_Cord, str):
         row_start, col_start = exc_coord_to_rc(start_Cord);
     elif isinstance(start_Cord, tuple):
-        if isinstance(start_Cord[0], int) and isinstance(start_Cord[1], int):
             row_start, col_start = start_Cord;
+            
     else:
         raise TypeError(f"Expected type 'tuple[int, int]' or 'str' for 'start_Cord' - recieved '{start_Cord}' : {type(start_Cord)}");
             
@@ -352,8 +353,7 @@ def get_excl_sheet_vals(sheet : Worksheet,
     if isinstance(end_Cord, str):
         row_end, col_end = exc_coord_to_rc(end_Cord);
     elif isinstance(end_Cord, tuple):
-        if isinstance(end_Cord[0], int) and isinstance(end_Cord[1], int):
-            row_end, col_end = end_Cord;
+            row_end, col_end = end_Cord;        
     else:
         raise TypeError(f"Expected type 'tuple[int, int]' or 'str' for 'end_Cord' - recieved '{end_Cord}' : {type(end_Cord)}");
 
